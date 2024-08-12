@@ -3,11 +3,7 @@ name: calculator-pl
 
 # What event is going to activate the pipeline.
 on:
-  #pull_request:
-  #  branches:
-  #    - master
-  #    - develop
-  #    - release
+
   push:
     branches:
       - master
@@ -27,6 +23,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.11.5
+      
+      - name: Variables
+        run: |
+          export DATABASE_URL=${{ secrets.DATABASE_URL }}
 
       - name: Install dependencies
         run: |
@@ -55,7 +55,7 @@ jobs:
         run: echo "::set-output name=commit_hash::$(git rev-parse HEAD)"
 
       - name: Build docker image
-        run: docker build -t backend-${{ vars.ENV }}:${{ steps.commit_hash_id.outputs.commit_hash }} --no-cache .
+        run: docker build --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} -t backend-${{ vars.ENV }}:${{ steps.commit_hash_id.outputs.commit_hash }} --no-cache .
 
   # Job para la fase de CD: Despliegue de la aplicación
   deploy_app:

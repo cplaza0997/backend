@@ -19,6 +19,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code into the container
 COPY ./app /app
 
+# Accept build arguments
+ARG DATABASE_URL
+
+# Set environment variable from build argument
+ENV DATABASE_URL=$DATABASE_URL
+
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
